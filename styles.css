@@ -335,19 +335,18 @@ textarea:focus {
 .leaderboard-panel th:nth-child(1)  { width: 50px; }
 .leaderboard-panel th:nth-child(2)  { width: 42px; }
 .leaderboard-panel th:nth-child(3)  { width: 150px; }
-.leaderboard-panel th:nth-child(4)  { width: 54px; }  /* Picked by */
-.leaderboard-panel th:nth-child(5)  { width: 72px; }
+.leaderboard-panel th:nth-child(4)  { width: 72px; }
+.leaderboard-panel th:nth-child(5)  { width: 66px; }
 .leaderboard-panel th:nth-child(6)  { width: 66px; }
-.leaderboard-panel th:nth-child(7)  { width: 66px; }
-.leaderboard-panel th:nth-child(8)  { width: 48px; }
+.leaderboard-panel th:nth-child(7)  { width: 48px; }
+.leaderboard-panel th:nth-child(8)  { width: 34px; }
 .leaderboard-panel th:nth-child(9)  { width: 34px; }
-.leaderboard-panel th:nth-child(10) { width: 34px; }
+.leaderboard-panel th:nth-child(10) { width: 50px; }
 .leaderboard-panel th:nth-child(11) { width: 50px; }
-.leaderboard-panel th:nth-child(12) { width: 50px; }
-.leaderboard-panel th:nth-child(13) { width: 34px; }
-.leaderboard-panel th:nth-child(14) { width: 46px; }
+.leaderboard-panel th:nth-child(12) { width: 34px; }
+.leaderboard-panel th:nth-child(13) { width: 46px; }
+.leaderboard-panel th:nth-child(14) { width: 56px; }
 .leaderboard-panel th:nth-child(15) { width: 56px; }
-.leaderboard-panel th:nth-child(16) { width: 56px; }
 
 th,
 td {

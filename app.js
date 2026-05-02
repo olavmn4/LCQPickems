@@ -628,18 +628,6 @@ function updatePickOrder(action, index) {
 }
 
 function renderPlayersTable() {
-  const total = state.entries.length;
-  const pickCounts = {};
-  state.entries.forEach((entry) => {
-    entry.picks.forEach((pick) => {
-      const key = pick.toLowerCase();
-      pickCounts[key] = (pickCounts[key] || 0) + 1;
-    });
-  });
-  state.players.forEach((player) => {
-    player.pickRate = total > 0 ? (pickCounts[player.username.toLowerCase()] || 0) / total : null;
-  });
-
   const players = filteredAndSortedPlayers();
   const heat = buildHeatScales(state.players);
   document.querySelectorAll("th").forEach((th) => th.classList.toggle("sorted", th.querySelector(`[data-sort="${state.sort}"]`)));
@@ -657,7 +645,6 @@ function renderPlayersTable() {
           <div class="player-name">${escapeHtml(displayName(player))}</div>
         </div>
       </td>
-      <td class="number ${heatClass(player, "pickRate", heat)}">${player.pickRate !== null ? percent(player.pickRate) : "—"}</td>
       <td class="number ${heatClass(player, "headstart", heat)}">${player.headstart ?? 0}</td>
       <td class="number ${heatClass(player, "peakElo", heat)}">${valueOrPending(player.peakElo ?? player.listedElo)}</td>
       <td class="number ${heatClass(player, "liveElo", heat)}">${valueOrPending(player.liveElo)}</td>
@@ -692,8 +679,7 @@ function buildHeatScales(players) {
     "forfeits",
     "forfeitRate",
     "bestTime",
-    "averageCompletion",
-    "pickRate"
+    "averageCompletion"
   ];
 
   return metrics.reduce((scales, metric) => {
@@ -823,8 +809,6 @@ async function saveEntry() {
     setStatus("Add at least one pick before saving.", "warn");
     return;
   }
-
-  if (!confirm(`Save entry as "${name}"?\n\nMake sure this is your correct username before confirming.`)) return;
 
   const authorToken = getAuthorToken();
   const existing = state.entries.find((e) => e.authorToken === authorToken);
