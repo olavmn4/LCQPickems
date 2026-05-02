@@ -23,12 +23,12 @@ using (true);
 drop policy if exists "entries can be submitted" on public.lcq_pickem_entries;
 create policy "entries can be submitted"
 on public.lcq_pickem_entries for insert
-with check (now() < '2026-05-02 16:00:00+00'::timestamptz);
+with check (now() < '2026-05-02 16:15:00+00'::timestamptz);
 
 drop policy if exists "entries can be edited" on public.lcq_pickem_entries;
 create policy "entries can be edited"
 on public.lcq_pickem_entries for update
-using (now() < '2026-05-02 16:00:00+00'::timestamptz);
+using (now() < '2026-05-02 16:15:00+00'::timestamptz);
 
 drop policy if exists "results are readable" on public.lcq_pickem_results;
 create policy "results are readable"

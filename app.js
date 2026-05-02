@@ -378,7 +378,7 @@ const STORAGE_KEYS = {
   authorToken: "mcsr-lcq-s10-author-token"
 };
 
-const SUBMISSION_DEADLINE = new Date("2026-05-02T16:00:00Z");
+const SUBMISSION_DEADLINE = new Date("2026-05-02T16:15:00Z");
 
 const API_ROOT = "https://api.mcsrranked.com/users";
 const PHASE_POINT_CUTOFF = 12;
