@@ -922,10 +922,10 @@ function scorePick(pick, index) {
 
   const distance = Math.abs(resultIndex - index);
   let pts = 0;
-  if (distance === 0) pts = 7;
-  else if (distance === 1) pts = 5;
-  else if (distance === 2) pts = 4;
-  else if (resultIndex < PICK_LIMIT) pts = 3;
+  if (distance === 0) pts = 5;
+  else if (distance === 1) pts = 4;
+  else if (distance === 2) pts = 3;
+  else if (resultIndex < PICK_LIMIT) pts = 2;
 
   if (index < 4 && resultIndex < 4) pts += TOP4_BONUS;
 
