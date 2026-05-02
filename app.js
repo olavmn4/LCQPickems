@@ -596,7 +596,7 @@ function renderPickList() {
     const username = state.picks[index];
     const player = username ? findPlayer(username) : null;
     const row = document.createElement("div");
-    row.className = "pick-slot";
+    row.className = `pick-slot${index < 4 ? " top4-slot" : ""}`;
     if (username) {
       row.draggable = true;
       row.dataset.player = username;
@@ -900,7 +900,7 @@ function openPicksModal(entry) {
       ? `<span class="modal-pick-score ${pts > 0 ? "has-pts" : ""}">${pts > 0 ? `+${pts}` : "0"} pts${top4Bonus ? " ★" : ""}</span>`
       : "";
     return `
-      <div class="modal-pick-row">
+      <div class="modal-pick-row${index < 4 ? " top4-row" : ""}">
         <span class="modal-pick-pos">#${index + 1}</span>
         <span class="modal-pick-name">${avatarHtml}${flagHtml}${name}</span>
         ${finishHtml}

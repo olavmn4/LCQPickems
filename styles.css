@@ -452,6 +452,10 @@ tbody tr.picked-row:hover {
   cursor: grab;
 }
 
+.top4-slot {
+  border-left: 2px solid rgba(74, 222, 128, 0.45);
+}
+
 .pick-slot.dragging {
   opacity: 0.45;
 }
@@ -729,6 +733,10 @@ tbody tr.picked-row:hover {
   gap: 8px;
   padding: 8px 0;
   border-top: 1px solid var(--line);
+}
+
+.top4-row {
+  border-left: 2px solid rgba(74, 222, 128, 0.45);
 }
 
 .modal-pick-pos {
