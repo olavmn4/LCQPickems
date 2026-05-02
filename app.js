@@ -885,6 +885,9 @@ function openPicksModal(entry) {
     const player = findPlayer(pick);
     const name = escapeHtml(player ? displayName(player) : pick);
     const country = player?.country || "";
+    const avatarHtml = player?.uuid
+      ? `<img class="avatar" alt="" src="https://minotar.net/helm/${escapeHtml(player.uuid.replace(/-/g, ""))}/22">`
+      : "";
     const flagHtml = country
       ? `<img class="flag" alt="${escapeHtml(country.toUpperCase())}" src="https://flagcdn.com/20x15/${escapeHtml(country.toLowerCase())}.png" onerror="this.style.display='none'">`
       : "";
@@ -899,7 +902,7 @@ function openPicksModal(entry) {
     return `
       <div class="modal-pick-row">
         <span class="modal-pick-pos">#${index + 1}</span>
-        <span class="modal-pick-name">${flagHtml} ${name}</span>
+        <span class="modal-pick-name">${avatarHtml}${flagHtml}${name}</span>
         ${finishHtml}
         ${scoreHtml}
       </div>`;
