@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>S10 MCSR Ranked LCQ Pickems</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="title-row">
+        <h1>MCSR Ranked LCQ Pickems</h1>
+        <span class="season-tag">S10</span>
+      </div>
+      <nav class="tab-nav">
+        <button class="tab-btn active" data-tab="pickems" type="button">Pickems</button>
+        <button class="tab-btn" data-tab="leaderboard" type="button">Leaderboard</button>
+      </nav>
+    </header>
+
+    <main>
+      <div id="tab-pickems" class="tab-panel">
+        <section class="pick-workbench">
+          <article class="panel table-panel leaderboard-panel">
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th><button class="th-sort no-sort" type="button">Pick</button></th>
+                    <th><button class="th-sort" data-sort="seed" type="button">Seed</button></th>
+                    <th><button class="th-sort" data-sort="username" type="button">Player</button></th>
+                    <th><button class="th-sort" data-sort="headstart" type="button">Headstart</button></th>
+                    <th><button class="th-sort" data-sort="peakElo" type="button">Peak Elo</button></th>
+                    <th><button class="th-sort" data-sort="liveElo" type="button">Final Elo</button></th>
+                    <th><button class="th-sort" data-sort="liveRank" type="button">Rank</button></th>
+                    <th><button class="th-sort" data-sort="wins" type="button">W</button></th>
+                    <th><button class="th-sort" data-sort="loses" type="button">L</button></th>
+                    <th><button class="th-sort" data-sort="played" type="button">Played</button></th>
+                    <th><button class="th-sort" data-sort="winRate" type="button">Win%</button></th>
+                    <th><button class="th-sort" data-sort="forfeits" type="button">FF</button></th>
+                    <th><button class="th-sort" data-sort="forfeitRate" type="button">FF%</button></th>
+                    <th><button class="th-sort" data-sort="bestTime" type="button">Best</button></th>
+                    <th><button class="th-sort" data-sort="averageCompletion" type="button">Avg</button></th>
+                  </tr>
+                </thead>
+                <tbody id="playersTable"></tbody>
+              </table>
+            </div>
+          </article>
+
+          <aside class="picks-panel">
+            <div class="panel">
+              <div id="pickList" class="pick-list"></div>
+              <div class="save-row">
+                <input id="entryName" type="text" maxlength="32" placeholder="Entry name">
+                <button id="saveEntry" class="button primary" type="button">Save</button>
+              </div>
+              <div class="save-row">
+                <button id="shareEntry" class="button secondary" type="button">Share</button>
+                <button id="clearPicks" class="button ghost" type="button">Clear</button>
+              </div>
+              <p id="saveStatus" class="status-line table-status" role="status"></p>
+              <details class="scoring-info">
+                <summary>How scoring works</summary>
+                <div class="scoring-rows">
+                  <span class="score-pts">10 pts</span><span>Exact place</span>
+                  <span class="score-pts">7 pts</span><span>One place off</span>
+                  <span class="score-pts">5 pts</span><span>Two places off</span>
+                  <span class="score-pts">3 pts</span><span>Three places off</span>
+                  <span class="score-pts">1 pt</span><span>Anywhere else in top 10</span>
+                  <span class="score-pts">0 pts</span><span>Not in top 10</span>
+                </div>
+                <div class="scoring-bonus">
+                  <span class="score-pts">+5 pts</span><span>Top 4 pick finishes in top 4</span>
+                </div>
+              </details>
+            </div>
+          </aside>
+        </section>
+      </div>
+
+      <div id="tab-leaderboard" class="tab-panel hidden">
+        <section class="leaderboard-section">
+          <article class="panel leaderboard-full-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Leaderboard</p>
+                <h2>Saved entries</h2>
+              </div>
+            </div>
+            <div id="leaderboard" class="leaderboard"></div>
+          </article>
+          <article class="panel results-panel">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Admin</p>
+                <h2>Final results</h2>
+              </div>
+              <button id="saveResults" class="button secondary" type="button">Save results</button>
+            </div>
+            <textarea id="actualResults" spellcheck="false" placeholder="One username per line, position 1 at top"></textarea>
+          </article>
+        </section>
+      </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
