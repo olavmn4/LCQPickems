@@ -34,3 +34,9 @@ drop policy if exists "results are readable" on public.lcq_pickem_results;
 create policy "results are readable"
 on public.lcq_pickem_results for select
 using (true);
+
+drop policy if exists "results can be saved" on public.lcq_pickem_results;
+create policy "results can be saved"
+on public.lcq_pickem_results for all
+using (true)
+with check (true);

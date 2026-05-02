@@ -390,7 +390,8 @@ const SUPABASE_TABLES = {
   entries: "lcq_pickem_entries",
   results: "lcq_pickem_results"
 };
-const ALLOW_PUBLIC_RESULT_UPDATES = false;
+const IS_ADMIN = new URLSearchParams(location.search).has("admin");
+const ALLOW_PUBLIC_RESULT_UPDATES = IS_ADMIN;
 const supabaseClient = SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
   : null;
@@ -409,7 +410,6 @@ const els = {
   pickList: document.querySelector("#pickList"),
   entryName: document.querySelector("#entryName"),
   saveEntry: document.querySelector("#saveEntry"),
-  shareEntry: document.querySelector("#shareEntry"),
   clearPicks: document.querySelector("#clearPicks"),
   saveStatus: document.querySelector("#saveStatus"),
   playersTable: document.querySelector("#playersTable"),
@@ -418,6 +418,7 @@ const els = {
   leaderboard: document.querySelector("#leaderboard")
 };
 
+if (IS_ADMIN) document.body.classList.add("admin");
 hydrateCachedStats();
 loadSharedPicks();
 wireEvents();
@@ -466,8 +467,10 @@ function loadSharedPicks() {
 }
 
 function wireEvents() {
+  document.getElementById("modalClose").addEventListener("click", closePicksModal);
+  document.getElementById("modalBackdrop").addEventListener("click", closePicksModal);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") closePicksModal(); });
   els.saveEntry.addEventListener("click", saveEntry);
-  els.shareEntry.addEventListener("click", copyShareLink);
   els.clearPicks.addEventListener("click", () => {
     state.picks = [];
     saveJson(STORAGE_KEYS.picks, state.picks);
@@ -858,35 +861,78 @@ function renderLeaderboard() {
 
   els.leaderboard.innerHTML = entries.length
     ? entries.map((entry, index) => `
-      <div class="leader-row">
+      <div class="leader-row" data-entry-id="${escapeHtml(entry.id)}">
         <span class="leader-rank">#${index + 1}</span>
         <span class="leader-name">${escapeHtml(entry.name)}</span>
         <span class="leader-score">${entry.score} pts</span>
       </div>
     `).join("")
     : `<p class="status-line">No saved entries yet.</p>`;
+
+  els.leaderboard.querySelectorAll(".leader-row[data-entry-id]").forEach((row) => {
+    row.addEventListener("click", () => {
+      const entry = state.entries.find((e) => e.id === row.dataset.entryId);
+      if (entry) openPicksModal(entry);
+    });
+  });
+}
+
+function openPicksModal(entry) {
+  document.getElementById("modalTitle").textContent = entry.name;
+
+  const hasResults = state.results.length > 0;
+  document.getElementById("modalPicks").innerHTML = entry.picks.slice(0, PICK_LIMIT).map((pick, index) => {
+    const player = findPlayer(pick);
+    const name = escapeHtml(player ? displayName(player) : pick);
+    const country = player?.country || "";
+    const flagHtml = country
+      ? `<img class="flag" alt="${escapeHtml(country.toUpperCase())}" src="https://flagcdn.com/20x15/${escapeHtml(country.toLowerCase())}.png" onerror="this.style.display='none'">`
+      : "";
+    const { pts, resultIndex } = hasResults ? scorePick(pick, index) : { pts: null, resultIndex: -1 };
+    const top4Bonus = hasResults && index < 4 && resultIndex !== -1 && resultIndex < 4;
+    const finishHtml = hasResults
+      ? `<span class="modal-pick-finish">${resultIndex >= 0 ? `#${resultIndex + 1}` : "—"}</span>`
+      : "";
+    const scoreHtml = hasResults
+      ? `<span class="modal-pick-score ${pts > 0 ? "has-pts" : ""}">${pts > 0 ? `+${pts}` : "0"} pts${top4Bonus ? " ★" : ""}</span>`
+      : "";
+    return `
+      <div class="modal-pick-row">
+        <span class="modal-pick-pos">#${index + 1}</span>
+        <span class="modal-pick-name">${flagHtml} ${name}</span>
+        ${finishHtml}
+        ${scoreHtml}
+      </div>`;
+  }).join("");
+
+  document.getElementById("picksModal").classList.remove("hidden");
+}
+
+function closePicksModal() {
+  document.getElementById("picksModal").classList.add("hidden");
+}
+
+function scorePick(pick, index) {
+  const results = state.results.map((n) => n.toLowerCase());
+  const resultIndex = results.indexOf(pick.toLowerCase());
+  if (resultIndex === -1) return { pts: 0, resultIndex: -1 };
+
+  const distance = Math.abs(resultIndex - index);
+  let pts = 0;
+  if (distance === 0) pts = 10;
+  else if (distance === 1) pts = 7;
+  else if (distance === 2) pts = 5;
+  else if (distance === 3) pts = 3;
+  else if (resultIndex < PICK_LIMIT) pts = 1;
+
+  if (index < 4 && resultIndex < 4) pts += TOP4_BONUS;
+
+  return { pts, resultIndex };
 }
 
 function scoreEntry(picks) {
-  const results = state.results.map((name) => name.toLowerCase());
-  if (!results.length) return 0;
-
-  return picks.slice(0, PICK_LIMIT).reduce((total, pick, index) => {
-    const resultIndex = results.indexOf(pick.toLowerCase());
-    if (resultIndex === -1) return total;
-
-    const distance = Math.abs(resultIndex - index);
-    let pts = 0;
-    if (distance === 0) pts = 10;
-    else if (distance === 1) pts = 7;
-    else if (distance === 2) pts = 5;
-    else if (distance === 3) pts = 3;
-    else if (resultIndex < PICK_LIMIT) pts = 1;
-
-    if (index < 4 && resultIndex < 4) pts += TOP4_BONUS;
-
-    return total + pts;
-  }, 0);
+  if (!state.results.length) return 0;
+  return picks.slice(0, PICK_LIMIT).reduce((total, pick, index) => total + scorePick(pick, index).pts, 0);
 }
 
 function getPickLimit() {

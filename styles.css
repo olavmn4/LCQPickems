@@ -619,9 +619,21 @@ tbody tr.picked-row:hover {
 
 .leaderboard-section {
   display: grid;
-  grid-template-columns: minmax(360px, 1.4fr) minmax(300px, 0.6fr);
+  grid-template-columns: 1fr;
   gap: 14px;
   padding-bottom: 40px;
+}
+
+.admin .leaderboard-section {
+  grid-template-columns: minmax(360px, 1.4fr) minmax(300px, 0.6fr);
+}
+
+.results-panel {
+  display: none;
+}
+
+.admin .results-panel {
+  display: block;
 }
 
 .leaderboard {
@@ -638,6 +650,12 @@ tbody tr.picked-row:hover {
   align-items: center;
   gap: 10px;
   padding: 7px 9px;
+  cursor: pointer;
+}
+
+.leader-row:hover {
+  border-color: rgba(74, 222, 128, 0.3);
+  background: var(--surface);
 }
 
 .leader-rank {
@@ -664,6 +682,91 @@ tbody tr.picked-row:hover {
 
 .warn {
   color: var(--red);
+}
+
+/* Modal */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.hidden {
+  display: none;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.modal-panel {
+  position: relative;
+  z-index: 1;
+  width: min(460px, calc(100vw - 40px));
+  background: var(--surface);
+  border: 1px solid var(--line);
+  padding: 18px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.modal-pick-row {
+  display: grid;
+  grid-template-columns: 32px 1fr auto auto;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+  border-top: 1px solid var(--line);
+}
+
+.modal-pick-pos {
+  color: var(--gold);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.modal-pick-name {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.modal-pick-finish {
+  color: var(--muted);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  text-align: right;
+}
+
+.modal-pick-score {
+  color: var(--muted);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 11px;
+  text-align: right;
+  min-width: 52px;
+}
+
+.modal-pick-score.has-pts {
+  color: var(--teal);
 }
 
 @media (max-width: 900px) {

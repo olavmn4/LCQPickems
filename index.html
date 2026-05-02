@@ -59,7 +59,6 @@
                 <button id="saveEntry" class="button primary" type="button">Save</button>
               </div>
               <div class="save-row">
-                <button id="shareEntry" class="button secondary" type="button">Share</button>
                 <button id="clearPicks" class="button ghost" type="button">Clear</button>
               </div>
               <p id="saveStatus" class="status-line table-status" role="status"></p>
@@ -96,7 +95,6 @@
           <article class="panel results-panel">
             <div class="panel-heading">
               <div>
-                <p class="eyebrow">Admin</p>
                 <h2>Final results</h2>
               </div>
               <button id="saveResults" class="button secondary" type="button">Save results</button>
@@ -106,6 +104,20 @@
         </section>
       </div>
     </main>
+
+    <div id="picksModal" class="modal hidden">
+      <div class="modal-backdrop" id="modalBackdrop"></div>
+      <div class="modal-panel">
+        <div class="modal-header">
+          <div>
+            <p class="eyebrow">entry</p>
+            <h2 id="modalTitle"></h2>
+          </div>
+          <button id="modalClose" class="icon-button" type="button">✕</button>
+        </div>
+        <div id="modalPicks"></div>
+      </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="app.js"></script>
