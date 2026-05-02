@@ -420,7 +420,6 @@ const els = {
 
 if (IS_ADMIN) document.body.classList.add("admin");
 hydrateCachedStats();
-loadSharedPicks();
 wireEvents();
 wireTabs();
 render();
@@ -451,20 +450,6 @@ function hydrateCachedStats() {
   state.picks = state.picks.filter((name) => findPlayer(name)).slice(0, PICK_LIMIT);
 }
 
-function loadSharedPicks() {
-  if (!location.hash.startsWith("#picks=")) return;
-  try {
-    const payload = JSON.parse(atob(decodeURIComponent(location.hash.replace("#picks=", ""))));
-    if (Array.isArray(payload.picks)) {
-      state.picks = payload.picks.filter((name) => findPlayer(name)).slice(0, PICK_LIMIT);
-      els.entryName.value = payload.name || "";
-      saveJson(STORAGE_KEYS.picks, state.picks);
-      setStatus("Loaded shared picks.", "toast");
-    }
-  } catch {
-    setStatus("Share link could not be loaded.", "warn");
-  }
-}
 
 function wireEvents() {
   document.getElementById("modalClose").addEventListener("click", closePicksModal);
@@ -854,35 +839,34 @@ async function saveEntry() {
   renderLeaderboard();
 }
 
-async function copyShareLink() {
-  const payload = encodeURIComponent(btoa(JSON.stringify({
-    name: els.entryName.value.trim(),
-    picks: state.picks
-  })));
-  const url = `${location.origin}${location.pathname}#picks=${payload}`;
-
-  try {
-    await navigator.clipboard.writeText(url);
-    setStatus("Share link copied.", "toast");
-  } catch {
-    location.hash = `picks=${payload}`;
-    setStatus("Share link is in the address bar.", "toast");
-  }
-}
 
 function renderLeaderboard() {
-  const entries = [...state.entries]
-    .map((entry) => ({ ...entry, score: scoreEntry(entry.picks) }))
-    .sort((a, b) => b.score - a.score || a.createdAt.localeCompare(b.createdAt));
+  const myToken = localStorage.getItem(STORAGE_KEYS.authorToken);
 
-  els.leaderboard.innerHTML = entries.length
-    ? entries.map((entry, index) => `
-      <div class="leader-row" data-entry-id="${escapeHtml(entry.id)}">
-        <span class="leader-rank">#${index + 1}</span>
-        <span class="leader-name">${escapeHtml(entry.name)}</span>
-        <span class="leader-score">${entry.score} pts</span>
-      </div>
-    `).join("")
+  const ranked = [...state.entries]
+    .map((entry) => ({ ...entry, score: scoreEntry(entry.picks) }))
+    .sort((a, b) => b.score - a.score || a.createdAt.localeCompare(b.createdAt))
+    .map((entry, index) => ({ ...entry, rank: index + 1 }));
+
+  ranked.sort((a, b) => {
+    const aMe = myToken && a.authorToken === myToken;
+    const bMe = myToken && b.authorToken === myToken;
+    if (aMe && !bMe) return -1;
+    if (!aMe && bMe) return 1;
+    return a.rank - b.rank;
+  });
+
+  els.leaderboard.innerHTML = ranked.length
+    ? ranked.map((entry) => {
+        const isMine = myToken && entry.authorToken === myToken;
+        return `
+          <div class="leader-row${isMine ? " my-entry" : ""}" data-entry-id="${escapeHtml(entry.id)}">
+            <span class="leader-rank">#${entry.rank}</span>
+            <span class="leader-name">${escapeHtml(entry.name)}</span>
+            <span class="leader-score">${entry.score} pts</span>
+          </div>
+        `;
+      }).join("")
     : `<p class="status-line">No saved entries yet.</p>`;
 
   els.leaderboard.querySelectorAll(".leader-row[data-entry-id]").forEach((row) => {
@@ -1041,7 +1025,7 @@ async function initRemoteData() {
   if (!supabaseClient) return;
 
   const [{ data: entries, error: entriesError }, { data: results, error: resultsError }] = await Promise.all([
-    supabaseClient.from(SUPABASE_TABLES.entries).select("id,name,picks,created_at").order("created_at", { ascending: false }),
+    supabaseClient.from(SUPABASE_TABLES.entries).select("id,author_token,name,picks,created_at").order("created_at", { ascending: false }),
     supabaseClient.from(SUPABASE_TABLES.results).select("results").eq("id", "official").maybeSingle()
   ]);
 
